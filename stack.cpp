@@ -15,13 +15,16 @@ elem_t stack_push_f (stack *stk, elem_t value)
 
         // if (!ASSERT_OK(stk))
         //         return;
-        elem_t *data = stk->data;
+        elem_t *data = stk->data + (int) stk->size;
                 printf("11 %d %d\n", stk->size, stk->capacity);
         if (stk->size >= stk->capacity)
                 stack_resize(stk, stk->size + 20);
-        printf("12 %d %d\n", stk->size, value);
-        data[stk->size] = value;
-printf("13\n");
+        printf("12 %d %d %d\n", stk->size, value, *data);
+        assert(data);
+        *data = value;
+        printf("13 %d %d %d\n", stk->size, value, *data);
+        stk->size++;
+
         // ASSERT_OK(stk);
         return value;
 }
@@ -30,8 +33,8 @@ elem_t stack_pop(stack *stk, stack_info *err)
 {
         assert(stk);
 
-        elem_t a = stk->data[stk->size];
-        stk->data[stk->size] = 0;
+        elem_t a = stk->data[stk->size - 1];
+        stk->data[stk->size - 1] = 0;
         return a;
 }
 
@@ -49,7 +52,7 @@ void stack_ctor (stack *stk)
 {
         assert(stk);
 
-        stk = (stack*) calloc(stk->capacity, sizeof(stack)); // how to make it with voids
+        stk->data = (elem_t*) calloc(stk->capacity, sizeof(stack)); // how to make it with voids
         // ASSERT_OK(stk);
 }
 
@@ -69,7 +72,7 @@ int stack_error (stack *stk)
 void print_stack (stack *stk)
 {
         for (size_t i = 0; i < stk->capacity; i++) {
-                printf("%d ", stk[i]);
+                printf("%d ", stk->data[i]);
         }
         printf("\n");
 }
