@@ -4,32 +4,25 @@
 
 #include "stack.h"
 
-// #define ASSERT_OK(stk) if (stack_error(stk)) {\
-//                         stack_dump(stk);       \
-//                         }                       \
-//
+static const char N_ERRORS = 4;
+static int errors = 0;
 
 elem_t stack_push_f (stack *stk, elem_t value)
 {
         assert(stk);
+        ASSERT_OK(stk);
 
-        // if (!ASSERT_OK(stk))
-        //         return;
         elem_t *data = stk->data + (int) stk->size;
-                printf("11 %d %d\n", stk->size, stk->capacity);
         if (stk->size >= stk->capacity)
                 stack_resize(stk, stk->size + 20);
-        printf("12 %d %d %d\n", stk->size, value, *data);
-        assert(data);
         *data = value;
-        printf("13 %d %d %d\n", stk->size, value, *data);
         stk->size++;
 
-        // ASSERT_OK(stk);
+        ASSERT_OK(stk);
         return value;
 }
 
-elem_t stack_pop(stack *stk, stack_info *err)
+elem_t stack_pop(stack *stk)
 {
         assert(stk);
 
@@ -42,31 +35,53 @@ size_t stack_resize (stack *stk, size_t capacity)
 {
         assert(stk);
 
-        stk = (stack*) realloc(stk, capacity);
+        stk->data = (elem_t*) realloc(stk, capacity);
 
-        // ASSERT_OK(stk);
+        ASSERT_OK(stk);
         return capacity;
 }
 
-void stack_ctor (stack *stk)
+void oper_stack_ctor (stack *stk, size_t capacity, char *var, char *func, char *file, int line)
 {
         assert(stk);
 
+        stk->capacity = capacity;
         stk->data = (elem_t*) calloc(stk->capacity, sizeof(stack)); // how to make it with voids
-        // ASSERT_OK(stk);
+        stk->info.line = line;
+        stk->info.file = file;
+        stk->info.func = func;
+        stk->info.var = var;
+
+        ASSERT_OK(stk);
 }
 
-void stack_dump (stack_info *stk)
+void stack_dump (stack *stk, int errors) // print all info
 {
         assert(stk);
 
+        unsigned char err[N_ERRORS] = {0};
+        printf("Error: ");
+        for (int i = 1; i < N_ERRORS + 1; i++) {
+                err[i - 1] = (errors >> (N_ERRORS - i)) & ~(~0 << 1);
+                printf("%d ", err[i - 1]);
+        }
+        printf("\n");
 }
 
-int stack_error (stack *stk)
+int stack_error (stack *stk) // check have an error
 {
-        assert(stk);
+        int error = 0;
 
-        return 0;
+        if (stk == nullptr)
+                error = error | 1;
+        if (stk->size < 0)
+                error = error | 2;
+        if (stk->capacity < 0)
+                error = error | 4;
+        if (stk->data == nullptr)
+                error = error | 8;
+error = 8;
+        return error;
 }
 
 void print_stack (stack *stk)
