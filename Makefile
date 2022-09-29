@@ -39,7 +39,7 @@ CFLAGS= -Wshadow    			\
 	-D_EJUDGE_CLIENT_SIDE
 
 all:
-	g++ -o a.exe $(CFLAGS) main.cpp stack.cpp
+	g++ -o a.exe $(CFLAGS) main.cpp stack.cpp security.cpp
 run:
 	a.exe
 

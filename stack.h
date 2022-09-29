@@ -4,7 +4,7 @@
 // #define VAR_INFO(var) {#var, __PRETTY_FUNCTION__, __FILE__, __LINE__}
 // #define stack_ctor(stk, capacity) oper_stack_ctor(stk, capacity, VAR_INFO(stk))
 #define DEF_CAPACITY 10
-#define ASSERT_OK(stk)  if (errors = stack_error(stk)) {           \
+#define ASSERT_OK(stk)  if (errors = stack_error(stk)) {                \
                                 stack_dump(stk, errors);                \
                         }                                               \
 
@@ -20,10 +20,12 @@ struct var_info
 
 struct stack
 {
+        int l_canary[1] = {};
         elem_t *data = nullptr;
         size_t size = 0;
         size_t capacity = 0;
         var_info info = {};
+        int r_canary[1] = {};
 };
 
 void print_stack (stack *stk);
