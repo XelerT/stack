@@ -1,5 +1,6 @@
 #ifndef STACK_H
 #define STACK_H
+#include <cstdint>
 
 // #define VAR_INFO(var) {#var, __PRETTY_FUNCTION__, __FILE__, __LINE__}
 // #define stack_ctor(stk, capacity) oper_stack_ctor(stk, capacity, VAR_INFO(stk))
@@ -10,12 +11,18 @@
 
 typedef int elem_t;
 
+struct gnu_hash
+{
+        uint64_t hash_stack = 0;
+        uint64_t hash_data  = 0;
+};
+
 struct var_info
 {
         int line = 0;
         char *func = nullptr;
         char *file = nullptr;
-        char *var = nullptr;
+        char *var  = nullptr;
 };
 
 struct stack
@@ -25,6 +32,9 @@ struct stack
         size_t size = 0;
         size_t capacity = 0;
         var_info info = {};
+        // #ifdef HASH_ON
+        gnu_hash *hash = nullptr;
+        // #endif /*HASH*/
         int r_canary[1] = {};
 };
 
