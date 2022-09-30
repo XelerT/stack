@@ -7,11 +7,12 @@ int main ()
 {
         stack stk1 = {};
         size_t capacity = 0;
-        printf("Enter capacity\n");
+        printf("Enter capacity your capacity (Real capacity will be your + 2*default_capacity).\n");
         scanf("%lld", &capacity);
         oper_stack_ctor(&stk1, capacity, (char*) "stk1", (char*) __PRETTY_FUNCTION__, (char*) __FILE__,__LINE__);
-        stack_push_f(&stk1, 1);
-        stack_push_f(&stk1, 2);
+        for (int i = 0; i < 10; i++) {
+                stack_push_f(&stk1, i);
+        }
         print_stack(&stk1);
         int value = stack_pop(&stk1);
         print_stack(&stk1);
