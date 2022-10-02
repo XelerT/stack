@@ -20,6 +20,7 @@
 #endif /*!FULL_SECURITY*/
 
 static const int DEF_CAPACITY = 10;
+static const int N_CANARIES = 3;
 
 typedef int elem_t;
 
@@ -52,7 +53,7 @@ struct var_info
 
 struct stack
 {
-        int l_canary[1] = {};
+        int l_canary[N_CANARIES] = {};
         elem_t *data = nullptr;
         size_t size = 0;
         size_t capacity = 0;
@@ -60,7 +61,7 @@ struct stack
         // #ifdef HASH_ON
         gnu_hash *hash = nullptr;
         // #endif /*HASH*/
-        int r_canary[1] = {};
+        int r_canary[N_CANARIES] = {};
 };
 
 void print_stack (stack *stk);

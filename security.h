@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "stack.h"
+#include "log.h"
 
 #ifdef CANARY_ON
 void  get_canaries (stack *stk);

@@ -10,14 +10,18 @@ static const int DEAD_CANARY = 16;
 void get_canaries (stack *stk)
 {
         int value = CANARY;
-        stk->l_canary[0] = value;
-        stk->r_canary[0] = value;
+        for (int i = 0; i < N_CANARIES; i++) {
+                stk->l_canary[i] = value;
+                stk->r_canary[i] = value;
+        }
 }
 
 int check_canaries (stack *stk)
 {
-        if (stk->l_canary[0] != CANARY || stk->r_canary[0] != CANARY)
-                return DEAD_CANARY;
+        for (int i = 0; i < N_CANARIES; i++)
+                if (stk->l_canary[i] != CANARY || stk->r_canary[i] != CANARY)
+                        return DEAD_CANARY;
+
         return 0;
 }
 #endif /*CANARY_ON*/

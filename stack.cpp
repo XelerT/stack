@@ -130,6 +130,9 @@ void free_stack (stack *stk)
 
 int stack_dump (stack *stk, char *func, char *file, int line) // print all info, returns errors
 {
+        // FILE *output = nullptr;
+        // output = fopen("log.txt", "a");
+
         int errors = stack_error(stk);
         if (errors == 0)
                 return 0;
@@ -199,6 +202,8 @@ int stack_dump (stack *stk, char *func, char *file, int line) // print all info,
                }
         }
         printf("\n");
+
+        // fclose(output);
         return 0;
 }
 
