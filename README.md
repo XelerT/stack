@@ -1,4 +1,4 @@
-<img src="https://github.com/XelerT/stack/img/canary.gif" alt="Canary" width="200"/>
+<img src="https://github.com/XelerT/stack/tree/main/img/canary.gif" alt="Canary" width="200"/>
 
 # Stack
 
@@ -31,7 +31,7 @@ This is simple stack, created with array. You can turn on/off canary or hash pro
         - ```#define FULL_SECURITY``` will turn on canaries and hashes;
         - ```#define CANARY_ON``` will turn on only canary protection;
         - ```#define HASH_ON``` will turn on only hash protection.
-        <img src="https://github.com/XelerT/stack/img/example.png" alt="example" width="200"/>
+        <img src="https://github.com/XelerT/stack/tree/main/img/example.png" alt="example" width="200"/>
 
 ### Error analytics
 - `stack_dump()` will give you all information about stack condition in case of error.
