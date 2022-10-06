@@ -49,9 +49,11 @@ int stack_resize (stack *stk, size_t capacity)
 {
         assert(stk);
         stk->capacity = capacity;
-        stk->data = (elem_t*) realloc(stk->data, stk->capacity * sizeof(elem_t));
-        if (stk->data == nullptr)
+        elem_t *ptr = (elem_t*) realloc(stk->data, stk->capacity * sizeof(elem_t));
+        if (ptr == nullptr)
                 return NULL_DATA_PTR;
+        stk->data = ptr;
+
         fill_poison(stk);
 
 #ifdef HASH_ON
@@ -82,6 +84,7 @@ int stack_push_f (stack *stk, elem_t value) //returns errors
         #endif /*HASH_ON*/
 
         // ASSERT_OK(stk,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
         return stack_dump(stk, (char*) __PRETTY_FUNCTION__, (char*) __FILE__, __LINE__);
 }
 
@@ -136,29 +139,19 @@ int stack_dump (stack *stk, char *func, char *file, int line) // print all info,
         int errors = stack_error(stk);
         if (errors == 0)
                 return 0;
-        unsigned char err[N_ERRORS] = {0};
-        printf("\nError:\n");
-        for (int i = 1; i < N_ERRORS + 1; i++) {
-                err[i - 1] = (errors >> (N_ERRORS - i)) & ~(~0 << 1);
-        }
-        for (int i = 0, swap = 0; i < N_ERRORS / 2; i++) {
-                swap = err[i];
-                err[i] = err[N_ERRORS - i - 1];
-                err[N_ERRORS - i - 1] = swap;
-        }
 
-        if (err[0] == 1) {
-                printf(" Stack pointer is null.\n\n");
-                return NULL_STACK_PTR; // how to beautifully exit the program?
-        } else if (err[1] == 1) {
-                printf(" Data pointer in null.\n\n");
-                return NULL_DATA_PTR; // how to beautifully exit the program?
-        }
         int multp_errors = 0;
-        for (int i = 0; i < N_ERRORS; i++) {
-                if (err[i] != 0) {
-                        multp_errors = 1;
-                        if (multp_errors) {
+        for (int i = 1; i < N_ERRORS + 1; i++) {
+                if ((errors >> (N_ERRORS - i)) & ~(~0 << 1) != 0) {
+                        printf("\nError:\n");
+                        if (i == N_ERRORS) {
+                                printf(" Stack pointer is null.\n\n");
+                                return NULL_STACK_PTR;
+                        } else if (i == N_ERRORS - 1) {
+                                printf(" Data pointer in null.\n\n");
+                                return NULL_DATA_PTR;
+                        }
+                        if (!multp_errors) {
                                 printf(" %s at %s (%d):\n"
                                        " Stack[%x] (%s)\n"
                                        " %s at %s at %s (%d)\n"
@@ -178,36 +171,37 @@ int stack_dump (stack *stk, char *func, char *file, int line) // print all info,
                                                 printf("*[%d] = %d\n", j, stk->data[j]);
                                 }
                         }
+                        multp_errors = 1;
                         switch (i) {
-                        case 2:
+                        case N_ERRORS - 2:
                                 printf(" Stack size is negative.\n\n");
                                 break;
-                        case 3:
+                        case N_ERRORS - 3:
                                 printf(" Stack capacity is negative.\n\n");
                                 break;
 #ifdef CANARY_ON
-                        case 4:
+                        case N_ERRORS - 4:
                                 printf(" Canary has been changed.\n\n");
                                 return 2;
 #endif /*CANARY_ON*/
 #ifdef HASH_ON
-                        case 5:
+                        case N_ERRORS - 5:
                                 printf(" Hash of data has been changed.\n\n");
-                                break;
-                        case 6:
+                                return 5;
+                        case N_ERRORS - 6:
                                 printf(" Hash of struct has been changed.\n\n");
                                 return 6;
 #endif /*HASH_ON*/
                        }
-               }
+                        printf("\n");
+                }
         }
-        printf("\n");
 
         // fclose(output);
         return 0;
 }
 
-int stack_error (stack *stk) // check have an error
+int stack_error (stack *stk) // checks have an error
 {
         int error = 0;
         if (stk == nullptr) {
